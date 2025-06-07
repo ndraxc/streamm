@@ -171,6 +171,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
+        }
+
+        .fullscreen-iframe-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.3s;
+            transform-origin: center center;
         }
 
         .fullscreen-iframe {
@@ -192,6 +201,51 @@
             font-size: 20px;
             cursor: pointer;
             z-index: 10000;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10000;
+        }
+
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .seek-forward {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0;
+        }
+
+        .seek-backward {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0;
         }
     </style>
 </head>
@@ -275,36 +329,6 @@
                             <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
                         </div>
                     </div>
-                    <div class="video-card">
-                        <div class="video-container">
-                            <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
-                        </div>
-                        <div class="video-info">
-                            <div class="video-title">Judul Video 3</div>
-                            <div class="video-description">Deskripsi singkat video 3</div>
-                            <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
-                        </div>
-                    </div>
-                    <div class="video-card">
-                        <div class="video-container">
-                            <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
-                        </div>
-                        <div class="video-info">
-                            <div class="video-title">Judul Video 3</div>
-                            <div class="video-description">Deskripsi singkat video 3</div>
-                            <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
-                        </div>
-                    </div>
-                    <div class="video-card">
-                        <div class="video-container">
-                            <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
-                        </div>
-                        <div class="video-info">
-                            <div class="video-title">Judul Video 3</div>
-                            <div class="video-description">Deskripsi singkat video 3</div>
-                            <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
-                        </div>
-                    </div>
                     
                     <!-- Video 4 -->
                     <div class="video-card">
@@ -321,8 +345,6 @@
             </div>
         </div>
         
-        <!-- Tambahkan folder lain sesuai kebutuhan -->
-        
         <footer>
             &copy; 2023 Private Collection. Semua video adalah untuk penggunaan pribadi.
         </footer>
@@ -331,13 +353,23 @@
     <!-- Fullscreen container (hidden by default) -->
     <div id="fullscreen-container" class="fullscreen" style="display: none;">
         <button class="close-fullscreen" onclick="closeFullscreen()">×</button>
-        <iframe id="fullscreen-iframe" class="fullscreen-iframe" allowfullscreen></iframe>
+        
+        <div class="zoom-controls">
+            <button class="zoom-btn" onclick="zoomOut()">-</button>
+            <button class="zoom-btn" onclick="zoomIn()">+</button>
+        </div>
+        
+        <div class="fullscreen-iframe-container" id="iframe-container">
+            <div class="seek-backward" onclick="seekVideo(-10)"></div>
+            <div class="seek-forward" onclick="seekVideo(10)"></div>
+            <iframe id="fullscreen-iframe" class="fullscreen-iframe" allowfullscreen></iframe>
+        </div>
     </div>
     
     <script>
         // Password protection script
         function checkPassword() {
-            const correctPassword = "2310"; // Password diubah menjadi 2310
+            const correctPassword = "2310";
             const enteredPassword = document.getElementById("password").value;
             
             if (enteredPassword === correctPassword) {
@@ -353,7 +385,6 @@
             const folder = document.getElementById(folderId);
             folder.classList.toggle('active');
             
-            // Update arrow icon
             const arrow = folder.previousElementSibling.querySelector('span');
             arrow.textContent = folder.classList.contains('active') ? '▲' : '▼';
         }
@@ -372,7 +403,6 @@
                     card.style.display = 'block';
                     foundAny = true;
                     
-                    // Open parent folders
                     let parentFolder = card.closest('.folder-content');
                     if (parentFolder && !parentFolder.classList.contains('active')) {
                         parentFolder.classList.add('active');
@@ -390,13 +420,24 @@
         }
         
         // Fullscreen functions
+        let currentVideoUrl = '';
+        let currentZoom = 1;
+        
         function openFullscreen(videoUrl) {
+            currentVideoUrl = videoUrl;
+            currentZoom = 1;
+            
             const fullscreenContainer = document.getElementById('fullscreen-container');
             const fullscreenIframe = document.getElementById('fullscreen-iframe');
+            const iframeContainer = document.getElementById('iframe-container');
             
             fullscreenIframe.src = videoUrl;
             fullscreenContainer.style.display = 'flex';
             document.body.style.overflow = 'hidden';
+            iframeContainer.style.transform = `scale(${currentZoom})`;
+            
+            // Setup double tap detection
+            setupDoubleTap();
         }
         
         function closeFullscreen() {
@@ -408,13 +449,78 @@
             document.body.style.overflow = 'auto';
         }
         
+        // Zoom functions
+        function zoomIn() {
+            if (currentZoom < 2) {
+                currentZoom += 0.1;
+                document.getElementById('iframe-container').style.transform = `scale(${currentZoom})`;
+            }
+        }
+        
+        function zoomOut() {
+            if (currentZoom > 0.5) {
+                currentZoom -= 0.1;
+                document.getElementById('iframe-container').style.transform = `scale(${currentZoom})`;
+            }
+        }
+        
+        // Seek function
+        function seekVideo(seconds) {
+            // This would normally require access to the video element's API
+            // For Google Drive iframes, this isn't directly possible due to security restrictions
+            // In a real implementation with direct video elements, you would use:
+            // videoElement.currentTime += seconds;
+            
+            console.log(`Seeking ${seconds} seconds`);
+            // For demo purposes, we'll just show an alert
+            alert(`Fitur maju/mundur 10 detik akan bekerja dengan video langsung. Untuk Google Drive, fitur ini terbatas.`);
+        }
+        
+        // Double tap detection
+        function setupDoubleTap() {
+            const iframeContainer = document.getElementById('iframe-container');
+            let lastTap = 0;
+            
+            iframeContainer.addEventListener('touchend', function(event) {
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTap;
+                
+                if (tapLength < 300 && tapLength > 0) {
+                    // Double tap detected
+                    const tapX = event.changedTouches[0].pageX;
+                    const screenWidth = window.innerWidth;
+                    
+                    if (tapX < screenWidth / 2) {
+                        // Left side - seek backward
+                        seekVideo(-10);
+                    } else {
+                        // Right side - seek forward
+                        seekVideo(10);
+                    }
+                }
+                
+                lastTap = currentTime;
+            });
+            
+            // For mouse double click
+            iframeContainer.addEventListener('dblclick', function(event) {
+                const clickX = event.clientX;
+                const screenWidth = window.innerWidth;
+                
+                if (clickX < screenWidth / 2) {
+                    seekVideo(-10);
+                } else {
+                    seekVideo(10);
+                }
+            });
+        }
+        
         // Close fullscreen when pressing ESC key
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeFullscreen();
             }
             
-            // Search when pressing Enter in search input
             if (event.key === 'Enter' && event.target.id === 'search-input') {
                 searchVideos();
             }
