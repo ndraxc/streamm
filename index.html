@@ -32,6 +32,29 @@
             border-left: 5px solid #ff3333;
         }
         
+        .folder-container {
+            margin-bottom: 30px;
+        }
+        
+        .folder-header {
+            background-color: #2a2a2a;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .folder-content {
+            display: none;
+            padding-top: 15px;
+        }
+        
+        .folder-content.active {
+            display: block;
+        }
+        
         .video-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -112,6 +135,21 @@
             background-color: #45a049;
         }
         
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-input {
+            flex-grow: 1;
+            padding: 10px;
+            background-color: #333;
+            border: none;
+            color: white;
+            border-radius: 4px;
+        }
+        
         footer {
             text-align: center;
             margin-top: 40px;
@@ -120,10 +158,45 @@
             color: #777;
             font-size: 0.8em;
         }
+
+        /* Fullscreen styles */
+        .fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fullscreen-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .close-fullscreen {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            background-color: rgba(0,0,0,0.5);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10000;
+        }
     </style>
 </head>
 <body>
-    <!-- Password Protection Section (You can remove this if not needed) -->
+    <!-- Password Protection Section -->
     <div id="password-protection" class="password-protection">
         <h2>Akses Terbatas</h2>
         <p>Masukkan password untuk mengakses koleksi video:</p>
@@ -142,57 +215,129 @@
             <strong>PERINGATAN:</strong> Konten ini hanya untuk orang dewasa (18+). Jika Anda di bawah umur atau tidak seharusnya mengakses konten ini, silakan tinggalkan halaman ini sekarang.
         </div>
         
-        <div class="video-grid">
-            <!-- Video 1 -->
-            <div class="video-card">
-                <div class="video-container">
-                    <!-- Ganti URL dengan embed link dari Google Drive Anda -->
-                    <iframe src="https://drive.google.com/file/d/YOUR_VIDEO_ID_1/preview" allowfullscreen></iframe>
-                </div>
-                <div class="video-info">
-                    <div class="video-title">Judul Video 1</div>
-                    <div class="video-description">Deskripsi singkat video 1</div>
-                </div>
-            </div>
-            
-            <!-- Video 2 -->
-            <div class="video-card">
-                <div class="video-container">
-                    <!-- Ganti URL dengan embed link dari Google Drive Anda -->
-                  <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" width="640" height="480" allow="autoplay"></iframe>
-
-                </div>
-                <div class="video-info">
-                    <div class="video-title">Judul Video 2</div>
-                    <div class="video-description">Deskripsi singkat video 2</div>
-                </div>
-            </div>
-            
-            <!-- Tambahkan lebih banyak video card sesuai kebutuhan -->
-            <!-- Video Template (Copy paste ini dan ganti detailnya) -->
-            <!--
-            <div class="video-card">
-                <div class="video-container">
-                <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" width="640" height="480" allow="autoplay"></iframe>
-
-                </div>
-                <div class="video-info">
-                    <div class="video-title">Judul Video</div>
-                    <div class="video-description">Deskripsi video</div>
-                </div>
-            </div>
-            -->
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Cari video...">
+            <button onclick="searchVideos()" class="submit-btn">Cari</button>
         </div>
+        
+        <!-- Folder 1 -->
+        <div class="folder-container">
+            <div class="folder-header" onclick="toggleFolder('folder1')">
+                <h2>Folder 1</h2>
+                <span>▼</span>
+            </div>
+            <div id="folder1" class="folder-content">
+                <div class="video-grid">
+                    <!-- Video 1 -->
+                    <div class="video-card">
+                        <div class="video-container">
+                            <iframe src="https://drive.google.com/file/d/YOUR_VIDEO_ID_1/preview" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-title">Judul Video 1</div>
+                            <div class="video-description">Deskripsi singkat video 1</div>
+                            <button onclick="openFullscreen('https://drive.google.com/file/d/YOUR_VIDEO_ID_1/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Video 2 -->
+                    <div class="video-card">
+                        <div class="video-container">
+                            <iframe src="https://drive.google.com/file/d/YOUR_VIDEO_ID_2/preview" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-title">Judul Video 2</div>
+                            <div class="video-description">Deskripsi singkat video 2</div>
+                            <button onclick="openFullscreen('https://drive.google.com/file/d/YOUR_VIDEO_ID_2/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Folder 2 -->
+        <div class="folder-container">
+            <div class="folder-header" onclick="toggleFolder('folder2')">
+                <h2>Folder 2</h2>
+                <span>▼</span>
+            </div>
+            <div id="folder2" class="folder-content">
+                <div class="video-grid">
+                    <!-- Video 3 -->
+                    <div class="video-card">
+                        <div class="video-container">
+                            <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-title">Judul Video 3</div>
+                            <div class="video-description">Deskripsi singkat video 3</div>
+                            <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
+                        </div>
+                    </div>
+                    <div class="video-card">
+                        <div class="video-container">
+                            <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-title">Judul Video 3</div>
+                            <div class="video-description">Deskripsi singkat video 3</div>
+                            <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
+                        </div>
+                    </div>
+                    <div class="video-card">
+                        <div class="video-container">
+                            <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-title">Judul Video 3</div>
+                            <div class="video-description">Deskripsi singkat video 3</div>
+                            <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
+                        </div>
+                    </div>
+                    <div class="video-card">
+                        <div class="video-container">
+                            <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-title">Judul Video 3</div>
+                            <div class="video-description">Deskripsi singkat video 3</div>
+                            <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Video 4 -->
+                    <div class="video-card">
+                        <div class="video-container">
+                            <iframe src="https://drive.google.com/file/d/YOUR_VIDEO_ID_4/preview" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-title">Judul Video 4</div>
+                            <div class="video-description">Deskripsi singkat video 4</div>
+                            <button onclick="openFullscreen('https://drive.google.com/file/d/YOUR_VIDEO_ID_4/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tambahkan folder lain sesuai kebutuhan -->
         
         <footer>
             &copy; 2023 Private Collection. Semua video adalah untuk penggunaan pribadi.
         </footer>
     </div>
+
+    <!-- Fullscreen container (hidden by default) -->
+    <div id="fullscreen-container" class="fullscreen" style="display: none;">
+        <button class="close-fullscreen" onclick="closeFullscreen()">×</button>
+        <iframe id="fullscreen-iframe" class="fullscreen-iframe" allowfullscreen></iframe>
+    </div>
     
     <script>
         // Password protection script
         function checkPassword() {
-            const correctPassword = "password123"; // Ganti dengan password yang Anda inginkan
+            const correctPassword = "2310"; // Password diubah menjadi 2310
             const enteredPassword = document.getElementById("password").value;
             
             if (enteredPassword === correctPassword) {
@@ -203,6 +348,78 @@
             }
         }
         
+        // Folder toggle function
+        function toggleFolder(folderId) {
+            const folder = document.getElementById(folderId);
+            folder.classList.toggle('active');
+            
+            // Update arrow icon
+            const arrow = folder.previousElementSibling.querySelector('span');
+            arrow.textContent = folder.classList.contains('active') ? '▲' : '▼';
+        }
+        
+        // Search function
+        function searchVideos() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const videoCards = document.querySelectorAll('.video-card');
+            let foundAny = false;
+            
+            videoCards.forEach(card => {
+                const title = card.querySelector('.video-title').textContent.toLowerCase();
+                const description = card.querySelector('.video-description').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    foundAny = true;
+                    
+                    // Open parent folders
+                    let parentFolder = card.closest('.folder-content');
+                    if (parentFolder && !parentFolder.classList.contains('active')) {
+                        parentFolder.classList.add('active');
+                        const arrow = parentFolder.previousElementSibling.querySelector('span');
+                        arrow.textContent = '▲';
+                    }
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            if (!foundAny && searchTerm) {
+                alert('Tidak ditemukan video yang sesuai dengan pencarian Anda.');
+            }
+        }
+        
+        // Fullscreen functions
+        function openFullscreen(videoUrl) {
+            const fullscreenContainer = document.getElementById('fullscreen-container');
+            const fullscreenIframe = document.getElementById('fullscreen-iframe');
+            
+            fullscreenIframe.src = videoUrl;
+            fullscreenContainer.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeFullscreen() {
+            const fullscreenContainer = document.getElementById('fullscreen-container');
+            const fullscreenIframe = document.getElementById('fullscreen-iframe');
+            
+            fullscreenIframe.src = '';
+            fullscreenContainer.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close fullscreen when pressing ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeFullscreen();
+            }
+            
+            // Search when pressing Enter in search input
+            if (event.key === 'Enter' && event.target.id === 'search-input') {
+                searchVideos();
+            }
+        });
+
         // Optional: Check for password in session storage to avoid re-entering
         window.onload = function() {
             // Jika ingin bypass password saat development, uncomment baris berikut:
