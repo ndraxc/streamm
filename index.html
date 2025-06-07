@@ -1,52 +1,214 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Video Pribadi dari Google Drive</title>
-  <style>
-    body {
-      text-align: center;
-      font-family: sans-serif;
-      background-color: #f4f4f4;
-      padding: 20px;
-    }
-    video {
-      width: 90%;
-      max-width: 720px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Video Collection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+        
+        h1 {
+            color: #f5f5f5;
+        }
+        
+        .warning {
+            background-color: #330000;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 5px solid #ff3333;
+        }
+        
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .video-card {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .video-info {
+            padding: 15px;
+        }
+        
+        .video-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .video-description {
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        
+        .password-protection {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .password-input {
+            padding: 10px;
+            width: 80%;
+            margin: 10px 0;
+            background-color: #333;
+            border: none;
+            color: white;
+            border-radius: 4px;
+        }
+        
+        .submit-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #777;
+            font-size: 0.8em;
+        }
+    </style>
 </head>
 <body>
+    <!-- Password Protection Section (You can remove this if not needed) -->
+    <div id="password-protection" class="password-protection">
+        <h2>Akses Terbatas</h2>
+        <p>Masukkan password untuk mengakses koleksi video:</p>
+        <input type="password" id="password" class="password-input" placeholder="Masukkan password">
+        <button onclick="checkPassword()" class="submit-btn">Masuk</button>
+    </div>
+    
+    <!-- Main Content (Hidden by default) -->
+    <div id="main-content" style="display: none;">
+        <header>
+            <h1>Private Video Collection</h1>
+            <p>Koleksi pribadi - Hanya untuk penggunaan pribadi</p>
+        </header>
+        
+        <div class="warning">
+            <strong>PERINGATAN:</strong> Konten ini hanya untuk orang dewasa (18+). Jika Anda di bawah umur atau tidak seharusnya mengakses konten ini, silakan tinggalkan halaman ini sekarang.
+        </div>
+        
+        <div class="video-grid">
+            <!-- Video 1 -->
+            <div class="video-card">
+                <div class="video-container">
+                    <!-- Ganti URL dengan embed link dari Google Drive Anda -->
+                    <iframe src="https://drive.google.com/file/d/YOUR_VIDEO_ID_1/preview" allowfullscreen></iframe>
+                </div>
+                <div class="video-info">
+                    <div class="video-title">Judul Video 1</div>
+                    <div class="video-description">Deskripsi singkat video 1</div>
+                </div>
+            </div>
+            
+            <!-- Video 2 -->
+            <div class="video-card">
+                <div class="video-container">
+                    <!-- Ganti URL dengan embed link dari Google Drive Anda -->
+                  <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" width="640" height="480" allow="autoplay"></iframe>
 
-  <h2>🎥 Video Pribadi</h2>
-  <video id="myVideo" controls>
-    <source src="https://drive.google.com/uc?export=download&id=1mLVjI2K1uScwHknEp5U_10aivhY59GFt" type="video/mp4">
-    Maaf, browser kamu tidak mendukung pemutar video.
-  </video>
+                </div>
+                <div class="video-info">
+                    <div class="video-title">Judul Video 2</div>
+                    <div class="video-description">Deskripsi singkat video 2</div>
+                </div>
+            </div>
+            
+            <!-- Tambahkan lebih banyak video card sesuai kebutuhan -->
+            <!-- Video Template (Copy paste ini dan ganti detailnya) -->
+            <!--
+            <div class="video-card">
+                <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" width="640" height="480" allow="autoplay"></iframe>
 
-  <script>
-    const video = document.getElementById("myVideo");
-    let lastTap = 0;
-
-    // Ketuk dua kali di HP
-    video.addEventListener("touchend", function (e) {
-      const currentTime = new Date().getTime();
-      const tapLength = currentTime - lastTap;
-
-      if (tapLength < 300 && tapLength > 0) {
-        video.currentTime += 10; // Maju 10 detik
-      }
-
-      lastTap = currentTime;
-    });
-
-    // Klik dua kali di PC/Laptop
-    video.addEventListener("dblclick", function () {
-      video.currentTime += 10;
-    });
-  </script>
-
+                </div>
+                <div class="video-info">
+                    <div class="video-title">Judul Video</div>
+                    <div class="video-description">Deskripsi video</div>
+                </div>
+            </div>
+            -->
+        </div>
+        
+        <footer>
+            &copy; 2023 Private Collection. Semua video adalah untuk penggunaan pribadi.
+        </footer>
+    </div>
+    
+    <script>
+        // Password protection script
+        function checkPassword() {
+            const correctPassword = "password123"; // Ganti dengan password yang Anda inginkan
+            const enteredPassword = document.getElementById("password").value;
+            
+            if (enteredPassword === correctPassword) {
+                document.getElementById("password-protection").style.display = "none";
+                document.getElementById("main-content").style.display = "block";
+            } else {
+                alert("Password salah! Silakan coba lagi.");
+            }
+        }
+        
+        // Optional: Check for password in session storage to avoid re-entering
+        window.onload = function() {
+            // Jika ingin bypass password saat development, uncomment baris berikut:
+            // document.getElementById("password-protection").style.display = "none";
+            // document.getElementById("main-content").style.display = "block";
+        };
+    </script>
 </body>
 </html>
