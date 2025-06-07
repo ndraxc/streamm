@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Video Pribadi dari Google Drive</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    video {
+      width: 90%;
+      max-width: 720px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🎥 Video Pribadi</h2>
+  <video id="myVideo" controls>
+    <source src="https://drive.google.com/uc?export=download&id=1mLVjI2K1uScwHknEp5U_10aivhY59GFt" type="video/mp4">
+    Maaf, browser kamu tidak mendukung pemutar video.
+  </video>
+
+  <script>
+    const video = document.getElementById("myVideo");
+    let lastTap = 0;
+
+    // Ketuk dua kali di HP
+    video.addEventListener("touchend", function (e) {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTap;
+
+      if (tapLength < 300 && tapLength > 0) {
+        video.currentTime += 10; // Maju 10 detik
+      }
+
+      lastTap = currentTime;
+    });
+
+    // Klik dua kali di PC/Laptop
+    video.addEventListener("dblclick", function () {
+      video.currentTime += 10;
+    });
+  </script>
+
+</body>
+</html>
