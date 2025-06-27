@@ -1,1147 +1,557 @@
 <!DOCTYPE html>
-
 <html lang="id">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Private Video Collection</title>
-
 <style>
-
 body {
-
 font-family: Arial, sans-serif;
-
 background-color: #121212;
-
 color: #e0e0e0;
-
 margin: 0;
-
 padding: 20px;
-
 }
-
-
 
 header {
-
 text-align: center;
-
 margin-bottom: 30px;
-
 padding-bottom: 20px;
-
 border-bottom: 1px solid #333;
-
 }
-
-
 
 h1 {
-
 color: #f5f5f5;
-
 }
-
-
 
 .warning {
-
 background-color: #330000;
-
 padding: 15px;
-
 border-radius: 5px;
-
 margin-bottom: 20px;
-
 border-left: 5px solid #ff3333;
-
 }
-
-
 
 .folder-container {
-
 margin-bottom: 30px;
-
 }
-
-
 
 .folder-header {
-
 background-color: #2a2a2a;
-
 padding: 10px 15px;
-
 border-radius: 5px;
-
 cursor: pointer;
-
 display: flex;
-
 justify-content: space-between;
-
 align-items: center;
-
 }
-
-
 
 .folder-content {
-
 display: none;
-
 padding-top: 15px;
-
 }
-
-
 
 .folder-content.active {
-
 display: block;
-
 }
-
-
 
 .video-grid {
-
 display: grid;
-
 grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-
 gap: 20px;
-
 }
-
-
 
 .video-card {
-
 background-color: #1e1e1e;
-
 border-radius: 8px;
-
 overflow: hidden;
-
 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-
 transition: transform 0.3s;
-
 }
-
-
 
 .video-card:hover {
-
 transform: translateY(-5px);
-
 }
-
-
 
 .video-container {
-
 position: relative;
-
 padding-bottom: 56.25%; /* 16:9 aspect ratio */
-
 height: 0;
-
 overflow: hidden;
-
 }
-
-
 
 .video-container iframe {
-
 position: absolute;
-
 top: 0;
-
 left: 0;
-
 width: 100%;
-
 height: 100%;
-
 border: none;
-
 }
-
-
 
 .video-info {
-
 padding: 15px;
-
 }
-
-
 
 .video-title {
-
 font-weight: bold;
-
 margin-bottom: 5px;
-
 }
-
-
 
 .video-description {
-
 font-size: 0.9em;
-
 color: #aaa;
-
 }
-
-
 
 .password-protection {
-
 max-width: 500px;
-
 margin: 50px auto;
-
 padding: 20px;
-
 background-color: #1e1e1e;
-
 border-radius: 8px;
-
 text-align: center;
-
 }
-
-
 
 .password-input {
-
 padding: 10px;
-
 width: 80%;
-
 margin: 10px 0;
-
 background-color: #333;
-
 border: none;
-
 color: white;
-
 border-radius: 4px;
-
 }
-
-
 
 .submit-btn {
-
 padding: 10px 20px;
-
 background-color: #4CAF50;
-
 border: none;
-
 color: white;
-
 border-radius: 4px;
-
 cursor: pointer;
-
 }
-
-
 
 .submit-btn:hover {
-
 background-color: #45a049;
-
 }
-
-
 
 .search-container {
-
 margin-bottom: 20px;
-
 display: flex;
-
 gap: 10px;
-
 }
-
-
 
 .search-input {
-
 flex-grow: 1;
-
 padding: 10px;
-
 background-color: #333;
-
 border: none;
-
 color: white;
-
 border-radius: 4px;
-
 }
-
-
 
 footer {
-
 text-align: center;
-
 margin-top: 40px;
-
 padding-top: 20px;
-
 border-top: 1px solid #333;
-
 color: #777;
-
 font-size: 0.8em;
-
 }
-
-
 
 /* Fullscreen styles */
-
 .fullscreen {
-
 position: fixed;
-
 top: 0;
-
 left: 0;
-
 width: 100%;
-
 height: 100%;
-
 background-color: black;
-
 z-index: 9999;
-
 display: flex;
-
 justify-content: center;
-
 align-items: center;
-
-            overflow: hidden;
-
-        }
-
-
-
-        .fullscreen-iframe-container {
-
-            position: relative;
-
-            width: 100%;
-
-            height: 100%;
-
-            transition: transform 0.3s;
-
-            transform-origin: center center;
-
+overflow: hidden;
 }
 
-
+.fullscreen-iframe-container {
+position: relative;
+width: 100%;
+height: 100%;
+transition: transform 0.3s;
+transform-origin: center center;
+}
 
 .fullscreen-iframe {
-
 width: 100%;
-
 height: 100%;
-
 border: none;
-
 }
-
-
 
 .close-fullscreen {
-
 position: absolute;
-
 top: 20px;
-
 right: 20px;
-
 color: white;
-
 background-color: rgba(0,0,0,0.5);
-
 border: none;
-
 border-radius: 50%;
-
 width: 40px;
-
 height: 40px;
-
 font-size: 20px;
-
 cursor: pointer;
-
 z-index: 10000;
-
 }
 
+.zoom-controls {
+position: absolute;
+bottom: 20px;
+right: 20px;
+display: flex;
+gap: 10px;
+z-index: 10000;
+}
 
+.zoom-btn {
+width: 40px;
+height: 40px;
+background-color: rgba(0,0,0,0.5);
+color: white;
+border: none;
+border-radius: 50%;
+font-size: 20px;
+cursor: pointer;
+display: flex;
+justify-content: center;
+align-items: center;
+}
 
-        .zoom-controls {
+.seek-forward {
+position: absolute;
+left: 0;
+top: 0;
+width: 50%;
+height: 100%;
+cursor: pointer;
+z-index: 1000;
+opacity: 0;
+}
 
-            position: absolute;
-
-            bottom: 20px;
-
-            right: 20px;
-
-            display: flex;
-
-            gap: 10px;
-
-            z-index: 10000;
-
-        }
-
-
-
-        .zoom-btn {
-
-            width: 40px;
-
-            height: 40px;
-
-            background-color: rgba(0,0,0,0.5);
-
-            color: white;
-
-            border: none;
-
-            border-radius: 50%;
-
-            font-size: 20px;
-
-            cursor: pointer;
-
-            display: flex;
-
-            justify-content: center;
-
-            align-items: center;
-
-        }
-
-
-
-        .seek-forward {
-
-            position: absolute;
-
-            left: 0;
-
-            top: 0;
-
-            width: 50%;
-
-            height: 100%;
-
-            cursor: pointer;
-
-            z-index: 1000;
-
-            opacity: 0;
-
-        }
-
-
-
-        .seek-backward {
-
-            position: absolute;
-
-            right: 0;
-
-            top: 0;
-
-            width: 50%;
-
-            height: 100%;
-
-            cursor: pointer;
-
-            z-index: 1000;
-
-            opacity: 0;
-
-        }
-
+.seek-backward {
+position: absolute;
+right: 0;
+top: 0;
+width: 50%;
+height: 100%;
+cursor: pointer;
+z-index: 1000;
+opacity: 0;
+}
 </style>
-
 </head>
-
 <body>
-
-<!-- Password Protection Section -->
-
 <div id="password-protection" class="password-protection">
-
 <h2>Akses Terbatas</h2>
-
 <p>Masukkan password untuk mengakses koleksi video:</p>
-
 <input type="password" id="password" class="password-input" placeholder="Masukkan password">
-
 <button onclick="checkPassword()" class="submit-btn">Masuk</button>
-
 </div>
-
-
-
-<!-- Main Content (Hidden by default) -->
 
 <div id="main-content" style="display: none;">
-
 <header>
-
 <h1>Private Video Collection</h1>
-
 <p>Koleksi pribadi - Hanya untuk penggunaan pribadi</p>
-
 </header>
 
-
-
 <div class="warning">
-
 <strong>PERINGATAN:</strong> Konten ini hanya untuk orang dewasa (18+). Jika Anda di bawah umur atau tidak seharusnya mengakses konten ini, silakan tinggalkan halaman ini sekarang.
-
 </div>
-
-
-
-<!-- Search Bar -->
 
 <div class="search-container">
-
 <input type="text" id="search-input" class="search-input" placeholder="Cari video...">
-
 <button onclick="searchVideos()" class="submit-btn">Cari</button>
-
 </div>
 
-
-
-<!-- Folder 1 -->
-
 <div class="folder-container">
-
 <div class="folder-header" onclick="toggleFolder('folder1')">
-
 <h2>Folder 1</h2>
-
 <span>▼</span>
-
 </div>
-
 <div id="folder1" class="folder-content">
-
 <div class="video-grid">
-
-<!-- Video 1 -->
-
 <div class="video-card">
-
 <div class="video-container">
-
 <iframe src="https://drive.google.com/file/d/YOUR_VIDEO_ID_1/preview" allowfullscreen></iframe>
-
 </div>
-
 <div class="video-info">
-
 <div class="video-title">Judul Video 1</div>
-
 <div class="video-description">Deskripsi singkat video 1</div>
-
 <button onclick="openFullscreen('https://drive.google.com/file/d/YOUR_VIDEO_ID_1/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
-
 </div>
-
 </div>
-
-
-
-<!-- Video 2 -->
 
 <div class="video-card">
-
 <div class="video-container">
-
 <iframe src="https://drive.google.com/file/d/YOUR_VIDEO_ID_2/preview" allowfullscreen></iframe>
-
 </div>
-
 <div class="video-info">
-
 <div class="video-title">Judul Video 2</div>
-
 <div class="video-description">Deskripsi singkat video 2</div>
-
 <button onclick="openFullscreen('https://drive.google.com/file/d/YOUR_VIDEO_ID_2/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
-
 </div>
-
 </div>
-
 </div>
-
 </div>
-
 </div>
-
-
-
-<!-- Folder 2 -->
 
 <div class="folder-container">
-
 <div class="folder-header" onclick="toggleFolder('folder2')">
-
 <h2>Folder 2</h2>
-
 <span>▼</span>
-
 </div>
-
 <div id="folder2" class="folder-content">
-
 <div class="video-grid">
-
-<!-- Video 3 -->
-
 <div class="video-card">
-
 <div class="video-container">
-
 <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
-
 </div>
-
 <div class="video-info">
-
 <div class="video-title">Judul Video 3</div>
-
 <div class="video-description">Deskripsi singkat video 3</div>
-
 <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
-
 </div>
-
 </div>
-
-                    <div class="video-card">
-
-                        <div class="video-container">
-
-                            <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
-
-                        </div>
-
-                        <div class="video-info">
-
-                            <div class="video-title">Judul Video 3</div>
-
-                            <div class="video-description">Deskripsi singkat video 3</div>
-
-                            <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
-
-                        </div>
-
-                    </div>
-
-                    <div class="video-card">
-
-                        <div class="video-container">
-
-                            <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
-
-                        </div>
-
-                        <div class="video-info">
-
-                            <div class="video-title">Judul Video 3</div>
-
-                            <div class="video-description">Deskripsi singkat video 3</div>
-
-                            <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
-
-                        </div>
-
-                    </div>
-
-                    <div class="video-card">
-
-                        <div class="video-container">
-
-                            <iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
-
-                        </div>
-
-                        <div class="video-info">
-
-                            <div class="video-title">Judul Video 3</div>
-
-                            <div class="video-description">Deskripsi singkat video 3</div>
-
-                            <button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
-
-                        </div>
-
-                    </div>
-
-
-
-<!-- Video 4 -->
+<div class="video-card">
+<div class="video-container">
+<iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
+</div>
+<div class="video-info">
+<div class="video-title">Judul Video 3</div>
+<div class="video-description">Deskripsi singkat video 3</div>
+<button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
+</div>
+</div>
+<div class="video-card">
+<div class="video-container">
+<iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
+</div>
+<div class="video-info">
+<div class="video-title">Judul Video 3</div>
+<div class="video-description">Deskripsi singkat video 3</div>
+<button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
+</div>
+</div>
+<div class="video-card">
+<div class="video-container">
+<iframe src="https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview" allowfullscreen></iframe>
+</div>
+<div class="video-info">
+<div class="video-title">Judul Video 3</div>
+<div class="video-description">Deskripsi singkat video 3</div>
+<button onclick="openFullscreen('https://drive.google.com/file/d/1iqvBoMJ50rbyCwtgeyobSU3bgfPsNrYV/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
+</div>
+</div>
 
 <div class="video-card">
-
 <div class="video-container">
-
 <iframe src="https://drive.google.com/file/d/YOUR_VIDEO_ID_4/preview" allowfullscreen></iframe>
-
 </div>
-
 <div class="video-info">
-
 <div class="video-title">Judul Video 4</div>
-
 <div class="video-description">Deskripsi singkat video 4</div>
-
 <button onclick="openFullscreen('https://drive.google.com/file/d/YOUR_VIDEO_ID_4/preview')" class="submit-btn" style="margin-top: 10px;">Layar Penuh</button>
-
 </div>
-
 </div>
-
 </div>
-
 </div>
-
 </div>
-
-
-
-        <!-- Tambahkan folder lain sesuai kebutuhan -->
-
-        
 
 <footer>
-
 &copy; 2023 Private Collection. Semua video adalah untuk penggunaan pribadi.
-
 </footer>
-
 </div>
-
-
-
-<!-- Fullscreen container (hidden by default) -->
 
 <div id="fullscreen-container" class="fullscreen" style="display: none;">
-
 <button class="close-fullscreen" onclick="closeFullscreen()">×</button>
-
-        <iframe id="fullscreen-iframe" class="fullscreen-iframe" allowfullscreen></iframe>
-
-        
-
-        <div class="zoom-controls">
-
-            <button class="zoom-btn" onclick="zoomOut()">-</button>
-
-            <button class="zoom-btn" onclick="zoomIn()">+</button>
-
-        </div>
-
-        
-
-        <div class="fullscreen-iframe-container" id="iframe-container">
-
-            <div class="seek-backward" onclick="seekVideo(-10)"></div>
-
-            <div class="seek-forward" onclick="seekVideo(10)"></div>
-
-            <iframe id="fullscreen-iframe" class="fullscreen-iframe" allowfullscreen></iframe>
-
-        </div>
-
+<div class="zoom-controls">
+<button class="zoom-btn" onclick="zoomOut()">-</button>
+<button class="zoom-btn" onclick="zoomIn()">+</button>
+</div>
+<div class="fullscreen-iframe-container" id="iframe-container">
+<div class="seek-backward" onclick="seekVideo(-10)"></div>
+<div class="seek-forward" onclick="seekVideo(10)"></div>
+<iframe id="fullscreen-iframe" class="fullscreen-iframe" allowfullscreen></iframe>
+</div>
 </div>
 
-
-
 <script>
-
 // Password protection script
-
 function checkPassword() {
-
-            const correctPassword = "2310"; // Password diubah menjadi 2310
-
-            const correctPassword = "2310";
-
+const correctPassword = "2310"; // Kata sandi diatur kembali ke "2310"
 const enteredPassword = document.getElementById("password").value;
 
-
-
 if (enteredPassword === correctPassword) {
-
 document.getElementById("password-protection").style.display = "none";
-
 document.getElementById("main-content").style.display = "block";
-
 } else {
-
 alert("Password salah! Silakan coba lagi.");
-
 }
-
 }
-
-
 
 // Folder toggle function
-
 function toggleFolder(folderId) {
-
 const folder = document.getElementById(folderId);
-
 folder.classList.toggle('active');
 
-
-
-            // Update arrow icon
-
+// Update arrow icon
 const arrow = folder.previousElementSibling.querySelector('span');
-
 arrow.textContent = folder.classList.contains('active') ? '▲' : '▼';
-
 }
-
-
 
 // Search function
-
 function searchVideos() {
-
 const searchTerm = document.getElementById('search-input').value.toLowerCase();
-
 const videoCards = document.querySelectorAll('.video-card');
-
 let foundAny = false;
 
-
-
 videoCards.forEach(card => {
-
 const title = card.querySelector('.video-title').textContent.toLowerCase();
-
 const description = card.querySelector('.video-description').textContent.toLowerCase();
 
-
-
 if (title.includes(searchTerm) || description.includes(searchTerm)) {
-
 card.style.display = 'block';
-
 foundAny = true;
 
-
-
-                    // Open parent folders
-
+// Open parent folders
 let parentFolder = card.closest('.folder-content');
-
 if (parentFolder && !parentFolder.classList.contains('active')) {
-
 parentFolder.classList.add('active');
-
 const arrow = parentFolder.previousElementSibling.querySelector('span');
-
 arrow.textContent = '▲';
-
 }
-
 } else {
-
 card.style.display = 'none';
-
 }
-
 });
-
-
 
 if (!foundAny && searchTerm) {
-
 alert('Tidak ditemukan video yang sesuai dengan pencarian Anda.');
-
 }
-
 }
-
-
 
 // Fullscreen functions
-
-        let currentVideoUrl = '';
-
-        let currentZoom = 1;
-
-        
+let currentVideoUrl = '';
+let currentZoom = 1;
 
 function openFullscreen(videoUrl) {
-
-            currentVideoUrl = videoUrl;
-
-            currentZoom = 1;
-
-            
+currentVideoUrl = videoUrl;
+currentZoom = 1;
 
 const fullscreenContainer = document.getElementById('fullscreen-container');
-
 const fullscreenIframe = document.getElementById('fullscreen-iframe');
-
-            const iframeContainer = document.getElementById('iframe-container');
-
-
+const iframeContainer = document.getElementById('iframe-container');
 
 fullscreenIframe.src = videoUrl;
-
 fullscreenContainer.style.display = 'flex';
-
 document.body.style.overflow = 'hidden';
+iframeContainer.style.transform = `scale(${currentZoom})`;
 
-            iframeContainer.style.transform = `scale(${currentZoom})`;
-
-            
-
-            // Setup double tap detection
-
-            setupDoubleTap();
-
+// Setup double tap detection
+setupDoubleTap();
 }
-
-
 
 function closeFullscreen() {
-
 const fullscreenContainer = document.getElementById('fullscreen-container');
-
 const fullscreenIframe = document.getElementById('fullscreen-iframe');
 
-
-
 fullscreenIframe.src = '';
-
 fullscreenContainer.style.display = 'none';
-
 document.body.style.overflow = 'auto';
-
 }
 
-
-
-        // Zoom functions
-
-        function zoomIn() {
-
-            if (currentZoom < 2) {
-
-                currentZoom += 0.1;
-
-                document.getElementById('iframe-container').style.transform = `scale(${currentZoom})`;
-
-            }
-
-        }
-
-        
-
-        function zoomOut() {
-
-            if (currentZoom > 0.5) {
-
-                currentZoom -= 0.1;
-
-                document.getElementById('iframe-container').style.transform = `scale(${currentZoom})`;
-
-            }
-
-        }
-
-        
-
-        // Seek function
-
-        function seekVideo(seconds) {
-
-            // This would normally require access to the video element's API
-
-            // For Google Drive iframes, this isn't directly possible due to security restrictions
-
-            // In a real implementation with direct video elements, you would use:
-
-            // videoElement.currentTime += seconds;
-
-            
-
-            console.log(`Seeking ${seconds} seconds`);
-
-            // For demo purposes, we'll just show an alert
-
-            alert(`Fitur maju/mundur 10 detik akan bekerja dengan video langsung. Untuk Google Drive, fitur ini terbatas.`);
-
-        }
-
-        
-
-        // Double tap detection
-
-        function setupDoubleTap() {
-
-            const iframeContainer = document.getElementById('iframe-container');
-
-            let lastTap = 0;
-
-            
-
-            iframeContainer.addEventListener('touchend', function(event) {
-
-                const currentTime = new Date().getTime();
-
-                const tapLength = currentTime - lastTap;
-
-                
-
-                if (tapLength < 300 && tapLength > 0) {
-
-                    // Double tap detected
-
-                    const tapX = event.changedTouches[0].pageX;
-
-                    const screenWidth = window.innerWidth;
-
-                    
-
-                    if (tapX < screenWidth / 2) {
-
-                        // Left side - seek backward
-
-                        seekVideo(-10);
-
-                    } else {
-
-                        // Right side - seek forward
-
-                        seekVideo(10);
-
-                    }
-
-                }
-
-                
-
-                lastTap = currentTime;
-
-            });
-
-            
-
-            // For mouse double click
-
-            iframeContainer.addEventListener('dblclick', function(event) {
-
-                const clickX = event.clientX;
-
-                const screenWidth = window.innerWidth;
-
-                
-
-                if (clickX < screenWidth / 2) {
-
-                    seekVideo(-10);
-
-                } else {
-
-                    seekVideo(10);
-
-                }
-
-            });
-
-        }
-
-        
-
-// Close fullscreen when pressing ESC key
-
-document.addEventListener('keydown', function(event) {
-
-if (event.key === 'Escape') {
-
-closeFullscreen();
-
+// Zoom functions
+function zoomIn() {
+if (currentZoom < 2) {
+currentZoom += 0.1;
+document.getElementById('iframe-container').style.transform = `scale(${currentZoom})`;
+}
 }
 
-
-
-            // Search when pressing Enter in search input
-
-if (event.key === 'Enter' && event.target.id === 'search-input') {
-
-searchVideos();
-
+function zoomOut() {
+if (currentZoom > 0.5) {
+currentZoom -= 0.1;
+document.getElementById('iframe-container').style.transform = `scale(${currentZoom})`;
+}
 }
 
+// Seek function
+function seekVideo(seconds) {
+// This would normally require access to the video element's API
+// For Google Drive iframes, this isn't directly possible due to security restrictions
+// In a real implementation with direct video elements, you would use:
+// videoElement.currentTime += seconds;
+
+console.log(`Seeking ${seconds} seconds`);
+// For demo purposes, we'll just show an alert
+alert(`Fitur maju/mundur 10 detik akan bekerja dengan video langsung. Untuk Google Drive, fitur ini terbatas.`);
+}
+
+// Double tap detection
+function setupDoubleTap() {
+const iframeContainer = document.getElementById('iframe-container');
+let lastTap = 0;
+
+iframeContainer.addEventListener('touchend', function(event) {
+const currentTime = new Date().getTime();
+const tapLength = currentTime - lastTap;
+
+if (tapLength < 300 && tapLength > 0) {
+// Double tap detected
+const tapX = event.changedTouches[0].pageX;
+const screenWidth = window.innerWidth;
+
+if (tapX < screenWidth / 2) {
+// Left side - seek backward
+seekVideo(-10);
+} else {
+// Right side - seek forward
+seekVideo(10);
+}
+}
+
+lastTap = currentTime;
 });
 
+// For mouse double click
+iframeContainer.addEventListener('dblclick', function(event) {
+const clickX = event.clientX;
+const screenWidth = window.innerWidth;
 
+if (clickX < screenWidth / 2) {
+seekVideo(-10);
+} else {
+seekVideo(10);
+}
+});
+}
 
-// Optional: Check for password in session storage to avoid re-entering
+// Close fullscreen when pressing ESC key
+document.addEventListener('keydown', function(event) {
+if (event.key === 'Escape') {
+closeFullscreen();
+}
 
+// Search when pressing Enter in search input
+if (event.key === 'Enter' && event.target.id === 'search-input') {
+searchVideos();
+}
+});
+
+// Show password protection on load
 window.onload = function() {
-
-// Jika ingin bypass password saat development, uncomment baris berikut:
-
-// document.getElementById("password-protection").style.display = "none";
-
-// document.getElementById("main-content").style.display = "block";
-
+document.getElementById("password-protection").style.display = "block";
+document.getElementById("main-content").style.display = "none";
 };
-
 </script>
-
 </body>
-
 </html>
